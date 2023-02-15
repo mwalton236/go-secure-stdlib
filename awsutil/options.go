@@ -30,6 +30,7 @@ type Option func(*options) error
 type options struct {
 	withEnvironmentCredentials bool
 	withSharedCredentials      bool
+	withSharedConfig           bool
 	withAwsSession             *session.Session
 	withClientType             string
 	withUsername               string
@@ -50,6 +51,7 @@ func getDefaultOptions() options {
 	return options{
 		withEnvironmentCredentials: true,
 		withSharedCredentials:      true,
+		withSharedConfig:           true,
 		withClientType:             "iam",
 	}
 }
@@ -67,6 +69,14 @@ func WithEnvironmentCredentials(with bool) Option {
 func WithSharedCredentials(with bool) Option {
 	return func(o *options) error {
 		o.withSharedCredentials = with
+		return nil
+	}
+}
+
+// WithSharedConfig allows controlling whether shared config is used
+func WithSharedConfig(with bool) Option {
+	return func(o *options) error {
+		o.withSharedConfig = with
 		return nil
 	}
 }
