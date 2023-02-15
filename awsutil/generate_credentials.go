@@ -49,6 +49,9 @@ type CredentialsConfig struct {
 
 	// The profile for the shared credentials provider, if being used
 	Profile string
+	
+	// The filename for the shared config provider, if being used
+	ConfigFilename string
 
 	// The role ARN to use if using the web identity token provider
 	RoleARN string
@@ -196,6 +199,21 @@ func (c *CredentialsConfig) GenerateCredentialChain(opt ...Option) (*credentials
 		// Add the shared credentials provider
 		providers = append(providers, &credentials.SharedCredentialsProvider{
 			Filename: c.Filename,
+			Profile:  c.Profile,
+		})
+	}
+	
+	if opts.withSharedConfig {
+		profile := os.Getenv("AWS_PROFILE")
+		if profile != "" {
+			c.Profile = profile
+		}
+		if c.Profile == "" {
+			c.Profile = "default"
+		}
+		// Add the shared credentials provider
+		providers = append(providers, &credentials.SharedConfigProvider{
+			Filename: c.ConfigFilename,
 			Profile:  c.Profile,
 		})
 	}
